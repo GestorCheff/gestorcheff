@@ -1,0 +1,49 @@
+ .text-gradient-primary {
+        background: linear-gradient(135deg, #4e73df 0%, #224abe 100%);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+    
+    .bg-gradient-danger {
+        background: linear-gradient(135deg, #e74a3b 0%, #be2617 100%);
+    }
+    
+    .table-hover tbody tr {
+        transition: all 0.2s ease;
+    }
+    
+    .table-hover tbody tr:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    }
+    
+    .badge {
+        font-weight: 500;
+        letter-spacing: 0.5px;
+    }
+    
+    .badge-aguardando {
+        background-color: #f6c23e;
+        color: #000;
+    }
+    
+    .badge-preparando {
+        background-color: #36b9cc;
+        color: #fff;
+    }
+    
+    .badge-entregue {
+        background-color: #1cc88a;
+        color: #fff;
+    }
+    
+    .badge-cancelado {
+        background-color: #e74a3b;
+        color: #fff;
+    }
+    
+    .btn-rounded {
+        border-radius: 50px;
+    }
+

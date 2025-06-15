@@ -3,7 +3,7 @@
 namespace App\Controllers;
 
 use App\Models\RelatoriosRestaurantesModel;
-use App\Models\PedidosModel;
+use App\Models\PedidosTimeLineModel;
 use App\Models\ItensPedidoModel;
 use App\Models\RestaurantesModel;
 
@@ -24,7 +24,7 @@ class Relatorios extends BaseController
     public function sincronizar()
     {
         $relatorioModel = new RelatoriosRestaurantesModel();
-        $pedidoModel = new PedidosModel();
+        $pedidoModel = new PedidosTimeLineModel();
         $itemPedidoModel = new ItensPedidoModel();
         $restauranteModel = new RestaurantesModel();
         

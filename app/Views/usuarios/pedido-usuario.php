@@ -82,16 +82,6 @@
     <!-- Importa o Navmenu -->
     <?= view('/layouts/navmenu') ?>
 
-    <?php if (session()->has('usuario_id')): ?>
-        <div class="alert alert-info text-center">
-            Logado como: <strong><?= esc(session()->get('usuario_nome')) ?></strong> 
-            (ID: <?= esc(session()->get('usuario_id')) ?>)
-        </div>
-    <?php else: ?>
-        <div class="alert alert-warning text-center">
-            Usuário não autenticado.
-        </div>
-    <?php endif; ?>
 
 
     <!-- Cabeçalho do Cardápio -->

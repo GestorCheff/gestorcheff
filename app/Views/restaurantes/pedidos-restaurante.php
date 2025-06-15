@@ -138,6 +138,17 @@
                                             </button>
                                         </form>
                                     <?php endif; ?>
+                                    
+                                    <!-- Novo bloco para marcar como enviado -->
+                                    <?php if ($pedido['status'] == 'preparando'): ?>
+                                        <form method="post" action="<?= base_url('pedidos/enviar/' . $pedido['id']) ?>" class="d-inline">
+                                            <?= csrf_field() ?>
+                                            <button type="submit" class="btn btn-sm btn-info rounded-3 px-3">
+                                                <i class="fas fa-truck me-1"></i> Enviar
+                                            </button>
+                                        </form>
+                                    <?php endif; ?>
+                                                                        
                                     <?php if ($pedido['status'] != 'cancelado' && $pedido['status'] != 'finalizado'): ?>
                                         <form method="post" action="<?= base_url('pedidos/cancelar/' . $pedido['id']) ?>" class="d-inline">
                                             <?= csrf_field() ?>

@@ -6,7 +6,8 @@ if (!function_exists('getStatusBadgeClass')) {
             'aguardando' => 'bg-warning text-dark',
             'preparando' => 'bg-info text-white',
             'enviado'    => 'bg-primary text-white',
-            'finalizado' => 'bg-success text-white',
+            'finalizado'    => 'bg-success text-white',
+            'entregue' => 'bg-success text-white',
             'cancelado'  => 'bg-secondary text-white'
         ];
         

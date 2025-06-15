@@ -2,22 +2,22 @@
 
 namespace App\Filters;
 
-use CodeIgniter\Filters\FilterInterface;
 use CodeIgniter\HTTP\RequestInterface;
 use CodeIgniter\HTTP\ResponseInterface;
+use CodeIgniter\Filters\FilterInterface;
 
-class RestauranteAuthFilter implements FilterInterface
+class UsuarioAuthFilter implements FilterInterface
 {
     public function before(RequestInterface $request, $arguments = null)
     {
+        // Lógica de autenticação aqui
         if (!session()->get('usuario_logado')) {
-            return redirect()->to('/login')->with('error', 'Acesso não autorizado.');
+            return redirect()->to('/usuarios/login');
         }
-
     }
 
     public function after(RequestInterface $request, ResponseInterface $response, $arguments = null)
     {
-        // opcional
+        // Nada por enquanto
     }
 }

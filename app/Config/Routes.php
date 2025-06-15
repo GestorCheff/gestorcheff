@@ -15,72 +15,35 @@ $routes->get('/', 'Home::index');
 $routes->get('home', 'Home::index');
 /* ------------------- */
 
+// Rotas públicas (sem filtro)
+$routes->get('usuarios/login', 'Usuarios::login');
+$routes->post('usuarios/logar', 'Usuarios::logar');
+$routes->get('usuarios/cadastro', 'Usuarios::cadastro');
+$routes->post('usuarios/cadastrar', 'Usuarios::cadastrar');
 
 
-/*  Bloco Restaurante  */
-/* ------------------- */
+$routes->get('usuarios/logout', 'Usuarios::logout');
+$routes->get('usuarios/painel-usuario', 'Usuarios::painelUsuario');
+$routes->get('usuarios/informacao', 'Usuarios::informacao');
+$routes->get('usuarios/editar/(:num)', 'Usuarios::editar/$1');
+$routes->post('usuarios/atualizar/(:num)', 'Usuarios::atualizar/$1');
+$routes->get('usuarios/painelUsuario', 'Usuarios::painelUsuario');
 
 
-// Rotas de restaurantes
+// ROTAS PÚBLICAS - sem filtro
+$routes->get('restaurantes/cadastro', 'Restaurantes::cadastro');
+$routes->post('restaurantes/cadastrar', 'Restaurantes::cadastrar');
+$routes->get('restaurantes/login','Restaurantes::login');
+$routes->post('restaurantes/logar', 'Restaurantes::logar');
+
+
+// ROTAS PRIVADAS - com filtro restauranteAuth
 $routes->group('restaurantes', ['filter' => 'restauranteAuth'], function($routes) {
-    // Página para cadastro de restaurante
-    $routes->get('cadastro', 'Restaurantes::cadastro');
-
-    // Cadastrar restaurante
-    $routes->post('cadastrar', 'Restaurantes::cadastrar');
-
-    // Página de login do restaurante
-    $routes->get('login','Restaurantes::login');
-
-    // Logar restaurante
-    $routes->post('logar', 'Restaurantes::logar');
-
-    // Painel do restaurante
     $routes->get('painel/(:num)', 'Restaurantes::painel/$1');
-
-    // Página de Edição do Restaurante
     $routes->get('editar/(:num)', 'Restaurantes::editar/$1');
-
-    // Atualizar Informações do Restaurante
     $routes->post('atualizar/(:num)', 'Restaurantes::atualizar/$1');
-        
 });
-/* ------------------- */
 
-
-
-/*    Bloco Usuário    */
-/* ------------------- */
-$routes->group('usuarios', ['filter' => 'usuarioAuth'], function($routes) {
-    
-    // Página para Registro do Usuario 
-    $routes->get('cadastro', 'Usuarios::cadastro');
-
-    // Criar Usuarios
-    $routes->post('cadastrar', 'Usuarios::cadastrar');
-
-    // Página para Login do Usuário 
-    $routes->get('login', 'Usuarios::login');
-
-    // Logar na Conta
-    $routes->post('logar', 'Usuarios::logar');
-
-    //Deslogar da Conta
-    $routes->get('logout', 'Usuarios::logout');
-
-    // Página contendo o painel do Usuário
-    $routes->get('painel-usuario', 'Usuarios::painelUsuario');
-
-    // Informações do Usuário 
-    $routes->get('informacao', 'Usuarios::informacao');
-
-    // Atualizar Informações do Usuário
-    $routes->get('editar/(:num)', 'Usuarios::editar/$1');
-
-    // Painel do Usuário
-    $routes->get('painelUsuario', 'Usuarios::painelUsuario');
-    /* ------------------- */
-});
 
 
 
@@ -143,6 +106,20 @@ $routes->get('pedidos/(:num)', 'Pedidos::index/$1');
 $routes->get('pedidos/rastrear', 'Pedidos::rastrear'); 
 
 $routes->post('pedidos/salvar', 'Pedidos::salvar');
+
+$routes->post('pedidos/confirmar/(:num)', 'Pedidos::confirmar/$1');
+
+$routes->post('pedidos/cancelar/(:num)', 'Pedidos::cancelar/$1');
+
+$routes->post('pedidos/preparando/(:num)', 'Pedidos::iniciarPreparo/$1');
+
+$routes->post('pedidos/enviar/(:num)', 'Pedidos::enviar/$1');
+
+$routes->post('pedidos/enviado/(:num)', 'Pedidos::enviarParaEntrega/$1');
+
+$routes->post('pedidos/finalizado/(:num)', 'Pedidos::finalizarPedido/$1');
+
+$routes->post('pedidos/confirmar-entrega/(:num)', 'Pedidos::confirmarEntrega/$1');
 /* ------------------- */
 
 

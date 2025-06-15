@@ -3,7 +3,7 @@
 <div class="container py-5">
     <div class="d-flex justify-content-between align-items-center mb-5">
         <h1 class="mb-0"><i class="bi bi-truck me-3 text-gradient-primary"></i>Meus Pedidos</h1>
-        <a href="<?= base_url('restaurantes') ?>" class="btn btn-primary rounded-pill px-4">
+        <a href="<?= base_url('cardapiousuario/cardapio/cardapio') ?>" class="btn btn-primary rounded-pill px-4">
             <i class="bi bi-plus-circle me-2"></i>Fazer Novo Pedido
         </a>
     </div>
@@ -55,10 +55,19 @@
                                 <td class="pe-4 text-end">
                                     <div class="d-flex justify-content-end">
                                         <a href="<?= base_url('pedidos/detalhes/' . $pedido['id']) ?>" 
-                                           class="btn btn-sm btn-outline-primary rounded-pill me-2 d-flex align-items-center">
+                                        class="btn btn-sm btn-outline-primary rounded-pill me-2 d-flex align-items-center">
                                             <i class="bi bi-eye me-1"></i> Detalhes
                                         </a>
-                                        <?php if ($pedido['status'] == 'aguardando' || $pedido['status'] == 'preparando'): ?>
+                                        
+                                        <?php if ($pedido['status'] == 'enviado'): ?>
+                                            <form method="post" action="<?= base_url('pedidos/confirmar-entrega/' . $pedido['id']) ?>" class="d-inline">
+                                                <?= csrf_field() ?>
+                                                <button type="submit" class="btn btn-sm btn-outline-warning rounded-pill d-flex align-items-center cancelar-pedidor" 
+                                                        onclick="return confirm('Confirmar recebimento do pedido #<?= $pedido['id'] ?>?')">
+                                                    <i class="bi bi-patch-check me-1"></i> Recebido
+                                                </button>
+                                            </form>
+                                        <?php elseif ($pedido['status'] == 'aguardando' || $pedido['status'] == 'preparando'): ?>
                                             <button class="btn btn-sm btn-outline-danger rounded-pill d-flex align-items-center cancelar-pedido" 
                                                     data-pedido-id="<?= $pedido['id'] ?>">
                                                 <i class="bi bi-x-circle me-1"></i> Cancelar
@@ -81,6 +90,64 @@
         <?php endif; ?>
     <?php endif; ?>
 </div>
+
+ <!-- Lista de Pedidos em Entrega -->
+ <?php if ($pedido['status'] == 'enviado'): ?>
+     <div class="card border-0 shadow-sm rounded-3 overflow-hidden">
+         <div class="card-header bg-light">
+             <h5 class="mb-0"><i class="bi bi-truck me-2"></i>Pedidos em Entrega</h5>
+         </div>
+         <div class="table-responsive">
+             <table class="table table-hover mb-0">
+                 <thead class="bg-light">
+                     <tr>
+                         <th class="ps-4">Nº Pedido</th>
+                         <th>Restaurante</th>
+                         <th>Data Envio</th>
+                         <th>Valor Total</th>
+                         <th>Status</th>
+                         <th class="pe-4 text-end">Ações</th>
+                     </tr>
+                 </thead>
+                 <tbody>
+                     <?php foreach ($pedidos_entrega as $pedido): ?>
+                         <tr class="align-middle">
+                             <td class="ps-4 fw-bold"><?= $pedido['id'] ?></td>
+                             <td>
+                                 <div class="d-flex align-items-center">
+                                     <span><?= esc($pedido['restaurante_nome'] ?? 'Restaurante') ?></span>
+                                 </div>
+                             </td>
+                             <td><?= date('d/m/Y \à\s H:i', strtotime($pedido['envio_entrega'])) ?></td>
+                             <td class="fw-bold">R$ <?= number_format($pedido['valor_total'], 2, ',', '.') ?></td>
+                             <td>
+                                 <span class="badge rounded-pill py-2 px-3 bg-warning text-dark">
+                                     <i class="bi bi-truck me-1"></i>
+                                     Em Entrega
+                                 </span>
+                             </td>
+                             <td class="pe-4 text-end">
+                                 <div class="d-flex justify-content-end">
+                                     <a href="<?= base_url('pedidos/detalhes/' . $pedido['id']) ?>" 
+                                        class="btn btn-sm btn-outline-primary rounded-pill me-2 d-flex align-items-center">
+                                         <i class="bi bi-eye me-1"></i> Detalhes
+                                     </a>
+                                     <form method="post" action="<?= base_url('pedidos/confirmar-entrega/' . $pedido['id']) ?>" class="d-inline">
+                                         <?= csrf_field() ?>
+                                         <button type="submit" class="btn btn-sm btn-success rounded-pill d-flex align-items-center" 
+                                                 onclick="return confirm('Confirmar recebimento do pedido #<?= $pedido['id'] ?>?')">
+                                             <i class="bi bi-check-circle me-1"></i> Recebido
+                                         </button>
+                                     </form>
+                                 </div>
+                             </td>
+                         </tr>
+                     <?php endforeach; ?>
+                 </tbody>
+             </table>
+         </div>
+     </div>
+ <?php endif; ?>
 
 <!-- Modal de Confirmação de Cancelamento -->
 <div class="modal fade" id="cancelarPedidoModal" tabindex="-1" aria-hidden="true">
@@ -112,56 +179,8 @@
 <?= $this->endSection() ?>
 
 <?= $this->section('styles') ?>
-<style>
-    .text-gradient-primary {
-        background: linear-gradient(135deg, #4e73df 0%, #224abe 100%);
-        -webkit-background-clip: text;
-        background-clip: text;
-        -webkit-text-fill-color: transparent;
-    }
-    
-    .bg-gradient-danger {
-        background: linear-gradient(135deg, #e74a3b 0%, #be2617 100%);
-    }
-    
-    .table-hover tbody tr {
-        transition: all 0.2s ease;
-    }
-    
-    .table-hover tbody tr:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-    }
-    
-    .badge {
-        font-weight: 500;
-        letter-spacing: 0.5px;
-    }
-    
-    .badge-aguardando {
-        background-color: #f6c23e;
-        color: #000;
-    }
-    
-    .badge-preparando {
-        background-color: #36b9cc;
-        color: #fff;
-    }
-    
-    .badge-entregue {
-        background-color: #1cc88a;
-        color: #fff;
-    }
-    
-    .badge-cancelado {
-        background-color: #e74a3b;
-        color: #fff;
-    }
-    
-    .btn-rounded {
-        border-radius: 50px;
-    }
-</style>
+<link href="<?= base_url('css/rastreio-pedidos.css') ?>" type="text/css" rel="stylesheet" />
+
 <?= $this->endSection() ?>
 
 <?= $this->section('scripts') ?>
@@ -215,6 +234,7 @@ function getStatusIcon($status) {
     switch ($status) {
         case 'aguardando': return 'bi-clock';
         case 'preparando': return 'bi-egg-fried';
+        case 'enviado': return 'bi bi-truck';
         case 'entregue': return 'bi-check-circle';
         case 'cancelado': return 'bi-x-circle';
         default: return 'bi-question-circle';

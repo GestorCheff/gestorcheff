@@ -35,7 +35,7 @@ class PedidosModel extends Model
         'cliente_telefone'     => 'required|max_length[20]',
         'cliente_endereco'     => 'required|max_length[255]',
         'valor_total'          => 'required|decimal',
-        'status'               => 'required|in_list[aguardando,preparando,enviado,finalizado,cancelado]',
+        'status'               => 'required|in_list[aguardando,preparando,enviado,entregue,cancelado]',
         'data'                 => 'permit_empty|valid_date',
         'avaliacao'            => 'permit_empty|integer|greater_than_equal_to[1]|less_than_equal_to[5]',
         'avaliacao_detalhes'   => 'permit_empty|string'

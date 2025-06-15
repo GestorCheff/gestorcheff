@@ -27,9 +27,10 @@ class Usuarios extends BaseController
         return view('usuarios/cadastro-usuario');
     }
 
+
     public function atualizar($id)
     {
-        $usuarioModel = new \App\Models\UsuarioModel();
+        $usuarioModel = new UsuariosModel();
 
         $data = $this->request->getPost([
             'nome', 'sobrenome', 'datanascimento', 'email', 'telefone'
@@ -40,18 +41,25 @@ class Usuarios extends BaseController
             return redirect()->back()->with('errors', $usuarioModel->errors());
         }
 
-        return redirect()->to('/usuarios/perfil')->with('success', 'Perfil atualizado com sucesso!');
+        $usuarioId = session()->get('usuario_id');
+
+        if (!$usuarioId) {
+            return redirect()->to('/usuarios/login');
+        }
+
+        $usuario = $usuarioModel->find($usuarioId);
+        $email = $data['email'] ?? $usuario['email'];
+        $nomeUsuario = $data['nome'] ?? $usuario['nome'];
+
+        $this->enviar_email_confirmacao($nomeUsuario, $email);
+
+        return redirect()->back()->with('success', 'Perfil atualizado com sucesso!');
     }
 
 
 
     public function informacao()
     {
-        helper('autenticacao');
-
-        if (!isUsuarioLogado()) {
-            return redirect()->to('/usuarios/login')->with('error', 'Você precisa estar logado.');
-        }
 
         $usuarioId = session()->get('usuario_id');
 
@@ -80,11 +88,6 @@ class Usuarios extends BaseController
 
     public function painelUsuario()
     {
-        helper('autenticacao');
-
-        if (!isUsuarioLogado()) {
-            return redirect()->to('/usuarios/login')->with('error', 'Você precisa estar logado.');
-        }
 
         // Pega o ID do usuário da sessão
         $usuarioId = session()->get('usuario_id');
@@ -195,16 +198,104 @@ class Usuarios extends BaseController
     }
 
 
+
     public function editar($id)
     {
-        $usuarioModel = new \App\Models\UsuarioModel();
+        $usuarioModel = new UsuariosModel();
         $usuario = $usuarioModel->find($id);
 
         if (!$usuario) {
             throw new \CodeIgniter\Exceptions\PageNotFoundException('Usuário não encontrado');
         }
 
+        
         return view('usuarios/editar', ['usuario' => $usuario]);
     }
 
+
+    public function enviar_email_confirmacao($nomeUsuario, $emailDestino)
+    {
+        $email = \Config\Services::email();
+
+        // Criando o corpo HTML do e-mail
+        $mensagem = "
+        <!DOCTYPE html>
+        <html lang='pt-BR'>
+        <head>
+            <meta charset='UTF-8'>
+            <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+            <title>Perfil Atualizado</title>
+            <style>
+                body {
+                    font-family: 'Arial', sans-serif;
+                    line-height: 1.6;
+                    color: #333;
+                    max-width: 600px;
+                    margin: 0 auto;
+                    padding: 20px;
+                }
+                .header {
+                    background-color: #4CAF50;
+                    color: white;
+                    padding: 20px;
+                    text-align: center;
+                    border-radius: 5px 5px 0 0;
+                }
+                .content {
+                    padding: 20px;
+                    background-color: #f9f9f9;
+                    border-radius: 0 0 5px 5px;
+                    border: 1px solid #ddd;
+                    border-top: none;
+                }
+                .button {
+                    display: inline-block;
+                    padding: 10px 20px;
+                    background-color: #4CAF50;
+                    color: white;
+                    text-decoration: none;
+                    border-radius: 5px;
+                    margin-top: 15px;
+                }
+                .footer {
+                    margin-top: 20px;
+                    font-size: 12px;
+                    text-align: center;
+                    color: #777;
+                }
+            </style>
+        </head>
+        <body>
+            <div class='header'>
+                <h1>Perfil Atualizado com Sucesso!</h1>
+            </div>
+            <div class='content'>
+                <p>Olá, <strong>{$nomeUsuario}</strong>!</p>
+                <p>Seus dados de perfil foram atualizados com sucesso em nosso sistema.</p>
+                <p>Caso não tenha sido você quem realizou essa alteração, por favor entre em contato conosco imediatamente através deste e-mail ou pelo nosso site.</p>
+                
+                <p>Atenciosamente,<br>
+                <strong>Equipe Gestor Cheff</strong></p>
+                
+                <div class='footer'>
+                    <p>Este é um e-mail automático, por favor não responda diretamente a esta mensagem.</p>
+                    <p>© " . date('Y') . " Gestor Cheff. Todos os direitos reservados.</p>
+                </div>
+            </div>
+        </body>
+        </html>
+        ";
+
+        $email->setFrom('gestorcheff@gmail.com', 'Gestor Cheff');
+        $email->setTo($emailDestino);
+        $email->setSubject('Seu perfil foi atualizado - Gestor Cheff');
+        $email->setMessage($mensagem);
+        $email->setMailType('html'); // Definindo como e-mail HTML
+
+        if ($email->send()) {
+            log_message('info', 'Email enviado para ' . $emailDestino);
+        } else {
+            log_message('error', $email->printDebugger(['headers']));
+        }
+    }
 }
